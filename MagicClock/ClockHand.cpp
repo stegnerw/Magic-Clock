@@ -3,7 +3,6 @@
 #include <AccelStepper.h>
 #include <EEPROM.h>
 
-
 ClockHand::ClockHand(bool invert, int pos, int sp, int st, int m, int c1, int c3, int c2, int c4): AccelStepper(m, c1, c3, c2, c4) {
   positions = pos;
   steps = st;
@@ -46,7 +45,7 @@ void ClockHand::setNewPosition(int newpos) {
     move(scale*change);
 
     current_position = newpos;
-    EEPROM.update(memaddr,current_position);
+    EEPROM.write(memaddr,current_position);
   }  
 }
 
