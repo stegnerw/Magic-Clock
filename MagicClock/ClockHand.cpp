@@ -3,19 +3,30 @@
 #include <AccelStepper.h>
 #include <EEPROM.h>
 
+uint8_t ClockHand::s_EEPROM_ADDR = 0;
+// Step is 1 for now, but I'd like to do more sophisticated handling of position storage
+// If power is lost while a hand is moving, the position will be wrong
+const uint8_t ClockHand::s_EEPROM_ADDR_STEP = 1;
+
 ClockHand::ClockHand(bool invert, int pos, int sp, int st, int m, int c1, int c3, int c2, int c4): AccelStepper(m, c1, c3, c2, c4) {
+  // Position and speed related variables
   positions = pos;
   steps = st;
   speed = sp;
   scale = (invert ? -1 : 1);
   current_position = 0;
-  memaddr = c1;
+}
 
-  int stored_pos = EEPROM.read(memaddr);
-  if(stored_pos != 255) { 
-    current_position = stored_pos;
+void ClockHand::setup() {
+  // Set up EEPROM and increment EEPROM_ADDR
+  memaddr = s_EEPROM_ADDR;
+  s_EEPROM_ADDR += s_EEPROM_ADDR_STEP;
+  current_position = EEPROM.read(memaddr);
+  if(current_position > positions) {
+    current_position = 0;
   }
 
+  // Set up stepper params
   setMaxSpeed(1000);
   setSpeed(speed);
   setAcceleration(speed*10);
@@ -46,6 +57,7 @@ void ClockHand::setNewPosition(int newpos) {
 
     current_position = newpos;
     EEPROM.write(memaddr,current_position);
+    EEPROM.commit();
   }  
 }
 

@@ -1,6 +1,7 @@
 #include <Arduino.h>
-#include <WiFi.h>
+#include <EEPROM.h>
 #include <PubSubClient.h>
+#include <WiFi.h>
 
 #include "ClockHand.h"
 #include "config.h"
@@ -9,6 +10,8 @@
 #define MODE 8
 #define SPEED 500
 #define POSITIONS 10
+
+constexpr uint8_t s_CLOCK_HAND_COUNT = 5;
 
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
@@ -27,6 +30,14 @@ void setup() {
   wifi_reconnect();
   client.setServer(MQTT_SERVER, MQTT_PORT);
   client.setCallback(msgReceived);
+
+  // Set up EEPROM - necessary because Nano ESP32 immitates EEPROM with a RAM block stored in flash
+  EEPROM.begin(s_CLOCK_HAND_COUNT * ClockHand::s_EEPROM_ADDR_STEP);
+  personA.setup();
+  personB.setup();
+  personC.setup();
+  personD.setup();
+  personE.setup();
 
   // Serial console setup
   Serial.begin(9600);
