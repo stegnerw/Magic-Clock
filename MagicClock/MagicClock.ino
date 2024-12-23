@@ -10,8 +10,6 @@
 #define SPEED 500
 #define POSITIONS 10
 
-#define SERBUFFER 8
-
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
@@ -23,9 +21,6 @@ ClockHand personC = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 10, 12, 11, 1
 ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 14, 16, 15, 17);
 ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 18, 19, 20, 21);
 ClockHand *active;
-
-char cmd[SERBUFFER];
-boolean newData = false;
 
 void setup() {
   // Wi-Fi/MQTT setup
