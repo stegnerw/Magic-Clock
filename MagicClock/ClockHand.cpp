@@ -15,16 +15,25 @@ ClockHand::ClockHand(bool invert, int pos, int sp, int st, int m, int c1, int c3
   speed = sp;
   scale = (invert ? -1 : 1);
   current_position = 0;
+
+  // Grab and increment EEPROM address
+  memaddr = s_EEPROM_ADDR;
+  s_EEPROM_ADDR += s_EEPROM_ADDR_STEP;
 }
 
 void ClockHand::setup() {
-  // Set up EEPROM and increment EEPROM_ADDR
-  memaddr = s_EEPROM_ADDR;
-  s_EEPROM_ADDR += s_EEPROM_ADDR_STEP;
+  // Set up and read from EEPROM
+  Serial.print("Pos for EEPROM address ");
+  Serial.print(memaddr);
+  Serial.print(": ");
   current_position = EEPROM.read(memaddr);
-  if(current_position > positions) {
+  if(current_position > positions-1) {
+    Serial.print("Invalid value stored: ");
+    Serial.print(current_position);
+    Serial.print(" - defaulting to ");
     current_position = 0;
   }
+  Serial.println(current_position);
 
   // Set up stepper params
   setMaxSpeed(1000);

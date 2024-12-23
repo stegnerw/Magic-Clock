@@ -26,6 +26,9 @@ ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 18, 19, 20, 2
 ClockHand *active;
 
 void setup() {
+  // Serial console setup
+  Serial.begin(9600);
+
   // Wi-Fi/MQTT setup
   wifi_reconnect();
   client.setServer(MQTT_SERVER, MQTT_PORT);
@@ -33,15 +36,15 @@ void setup() {
 
   // Set up EEPROM - necessary because Nano ESP32 immitates EEPROM with a RAM block stored in flash
   EEPROM.begin(s_CLOCK_HAND_COUNT * ClockHand::s_EEPROM_ADDR_STEP);
+
+  // Set up clock hands
   personA.setup();
   personB.setup();
   personC.setup();
   personD.setup();
   personE.setup();
 
-  // Serial console setup
-  Serial.begin(9600);
-  Serial.println("Startup complete.");
+  Serial.println("Setup complete.");
 }
 
 void loop() {
