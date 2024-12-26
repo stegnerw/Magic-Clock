@@ -111,7 +111,7 @@ void mqtt_reconnect() {
 // 9: Restaurant
 
 int parseLocation(char loc[]) {
-  int pos=3; // default to Lost
+  int pos=5; // default to Lost
   if (strcasecmp(loc,"Home") == 0) {
     pos = 0;
   }
