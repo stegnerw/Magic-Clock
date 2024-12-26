@@ -8,8 +8,8 @@
 
 #define STEPS 4096
 #define MODE 8
-#define SPEED 500
-#define POSITIONS 10
+constexpr float SPEED = 500;
+constexpr uint8_t POSITIONS = 10;
 
 constexpr uint8_t s_CLOCK_HAND_COUNT = 5;
 
