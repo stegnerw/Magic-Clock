@@ -18,10 +18,10 @@ PubSubClient client(wifiClient);
 
 // Change the first parameter to switch the direction of rotation
 // TODO: Verify pinouts
-ClockHand personA = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 2, 4, 3, 5);
-ClockHand personB = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 6, 8, 7, 9);
-ClockHand personC = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 10, 12, 11, 13);
-ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 14, 16, 15, 17);
+ClockHand personA = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 2, 3, 4, 5);
+ClockHand personB = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 6, 7, 8, 9);
+ClockHand personC = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 10, 11, 12, 13);
+ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 14, 15, 16, 17);
 ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 18, 19, 20, 21);
 ClockHand *active;
 

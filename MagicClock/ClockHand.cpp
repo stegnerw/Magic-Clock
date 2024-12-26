@@ -8,7 +8,7 @@ uint8_t ClockHand::s_EEPROM_ADDR = 0;
 // If power is lost while a hand is moving, the position will be wrong
 const uint8_t ClockHand::s_EEPROM_ADDR_STEP = 1;
 
-ClockHand::ClockHand(bool invert, int pos, int sp, int st, int m, int c1, int c3, int c2, int c4): AccelStepper(m, c1, c3, c2, c4) {
+ClockHand::ClockHand(bool invert, int pos, int sp, int st, int m, int c1, int c2, int c3, int c4): AccelStepper(m, c1, c3, c2, c4) {
   // Position and speed related variables
   positions = pos;
   steps = st;
