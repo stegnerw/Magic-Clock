@@ -99,47 +99,47 @@ void mqtt_reconnect() {
 }
 
 // Clock face positions:
-// 0: Home
-// 1: Work
-// 2: School
-// 3: Relative's
-// 4: Traveling
-// 5: Lost
-// 6: Mortal Peril
-// 7: Doctor
-// 8: Shopping
-// 9: Restaurant
+// 0: Work
+// 1: School
+// 2: Relative's
+// 3: Traveling
+// 4: Lost
+// 5: Mortal Peril
+// 6: Doctor
+// 7: Shopping
+// 8: Restaurant
+// 9: Home
 
 int parseLocation(char loc[]) {
-  int pos=5; // default to Lost
-  if (strcasecmp(loc,"Home") == 0) {
+  int pos=4; // default to Lost
+  if (strcasecmp(loc,"Work") == 0) {
     pos = 0;
   }
-  else if (strcasecmp(loc,"Work") == 0) {
+  else if (strcasecmp(loc,"School") == 0) {
     pos = 1;
   }
-  else if (strcasecmp(loc,"School") == 0) {
+  else if (strcasecmp(loc,"Relative's") == 0) {
     pos = 2;
   }
-  else if (strcasecmp(loc,"Relative's") == 0) {
+  else if (strcasecmp(loc,"Traveling") == 0) {
     pos = 3;
   }
-  else if (strcasecmp(loc,"Traveling") == 0) {
+  else if (strcasecmp(loc,"Lost") == 0 or strcasecmp(loc,"not_home") == 0) {
     pos = 4;
   }
-  else if (strcasecmp(loc,"Lost") == 0 or strcasecmp(loc,"not_home") == 0) {
+  else if (strcasecmp(loc,"Mortal Peril") == 0) {
     pos = 5;
   }
-  else if (strcasecmp(loc,"Mortal Peril") == 0) {
+  else if (strcasecmp(loc,"Doctor") == 0) {
     pos = 6;
   }
-  else if (strcasecmp(loc,"Doctor") == 0) {
+  else if (strcasecmp(loc,"Shopping") == 0) {
     pos = 7;
   }
-  else if (strcasecmp(loc,"Shopping") == 0) {
+  else if (strcasecmp(loc,"Restaurant") == 0) {
     pos = 8;
   }
-  else if (strcasecmp(loc,"Restaurant") == 0) {
+  else if (strcasecmp(loc,"Home") == 0) {
     pos = 9;
   }
   else {
