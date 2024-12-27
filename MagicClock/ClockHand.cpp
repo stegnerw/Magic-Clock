@@ -9,7 +9,7 @@ uint8_t ClockHand::s_EEPROM_ADDR = 0;
 const uint8_t ClockHand::s_EEPROM_ADDR_STEP = 1;
 
 ClockHand::ClockHand(bool invert, uint8_t positions, float speed, uint16_t steps,
-                     int mode, uint8_t pin1, uint8_t pin3, uint8_t pin2, uint8_t pin4)
+                     int mode, uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4)
   : AccelStepper(mode, pin1, pin3, pin2, pin4, false)
   , positions{positions}
   , current_position{0}
