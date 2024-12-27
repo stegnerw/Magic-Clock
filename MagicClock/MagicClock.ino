@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <cerrno>
+#include <cstring>
 #include <EEPROM.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
@@ -15,6 +17,9 @@ constexpr uint8_t s_CLOCK_HAND_COUNT = 5;
 
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
+
+const char location_cmd[] = "/location";
+const char step_cmd[] = "/step";
 
 // Change the first parameter to switch the direction of rotation
 // TODO: Verify pinouts
@@ -111,72 +116,83 @@ void mqtt_reconnect() {
 // 9: Home
 
 int parseLocation(char loc[]) {
-  int pos=4; // default to Lost
-  if (strcasecmp(loc,"Work") == 0) {
+  int pos = 4; // default to Lost
+  if (std::strcmp(loc,"Work") == 0) {
     pos = 0;
   }
-  else if (strcasecmp(loc,"School") == 0) {
+  else if (std::strcmp(loc,"School") == 0) {
     pos = 1;
   }
-  else if (strcasecmp(loc,"Relative's") == 0) {
+  else if (std::strcmp(loc,"Relative's") == 0) {
     pos = 2;
   }
-  else if (strcasecmp(loc,"Traveling") == 0) {
+  else if (std::strcmp(loc,"Traveling") == 0) {
     pos = 3;
   }
-  else if (strcasecmp(loc,"Lost") == 0 or strcasecmp(loc,"not_home") == 0) {
+  else if (std::strcmp(loc,"Lost") == 0) {
     pos = 4;
   }
-  else if (strcasecmp(loc,"Mortal Peril") == 0) {
+  else if (std::strcmp(loc,"Mortal Peril") == 0) {
     pos = 5;
   }
-  else if (strcasecmp(loc,"Doctor") == 0) {
+  else if (std::strcmp(loc,"Doctor") == 0) {
     pos = 6;
   }
-  else if (strcasecmp(loc,"Shopping") == 0) {
+  else if (std::strcmp(loc,"Shopping") == 0) {
     pos = 7;
   }
-  else if (strcasecmp(loc,"Restaurant") == 0) {
+  else if (std::strcmp(loc,"Restaurant") == 0) {
     pos = 8;
   }
-  else if (strcasecmp(loc,"Home") == 0) {
+  else if (std::strcmp(loc,"Home") == 0) {
     pos = 9;
   }
   else {
-    Serial.println("Invlid location.");
+    Serial.print("  Invalid location: ");
+    Serial.println(loc);
+    Serial.print("    Defaulting to Lost - ");
+    Serial.println(pos);
   }
   return pos;
 }
 
-void msgReceived(char* topic, byte* payload, unsigned int length) {
+long parseStepCount(char steps[]) {
+  long step_count = std::strtol(steps, NULL, 10);
+  if (errno == ERANGE) {
+    Serial.print("  Invalid step count: ");
+    Serial.println(steps);
+    Serial.println("    Defaulting to 0 steps.");
+    step_count = 0;
+  }
+  return step_count;
+}
+
+void msgReceived(char* topic, uint8_t* payload, unsigned int length) {
+
   // Log the message to serial
   Serial.println("Received a message.");
   Serial.print("  Topic: ");
   Serial.println(topic);
 
   // Select the appropriate person based on the topic
-  if(strcmp(topic,"home/clock/personA") == 0) {
+  if (strstr(topic, "/home/clock/personA") != NULL) {
     active = &personA;
     Serial.print("  Moving Person A ");
-  }
-  else if(strcmp(topic,"home/clock/personB") == 0) {
+  } else if (strstr(topic, "/home/clock/personB") != NULL) {
     active = &personB;
     Serial.print("  Moving Person B ");
-  }
-  else if(strcmp(topic,"home/clock/personC") == 0) {
+  } else if (strstr(topic, "/home/clock/personC") != NULL) {
     active = &personC;
     Serial.print("  Moving Person C ");
-  }
-  else if(strcmp(topic,"home/clock/personD") == 0) {
+  } else if (strstr(topic, "/home/clock/personD") != NULL) {
     active = &personD;
     Serial.print("  Moving Person D ");
-  }
-  else if(strcmp(topic,"home/clock/personE") == 0) {
+  } else if (strstr(topic, "/home/clock/personE") != NULL) {
     active = &personE;
     Serial.print("  Moving Person E ");
-  }
-  else {
-    Serial.println("  ***Invalid topic received.***");
+  } else {
+    Serial.println("  ***Invalid topic received***");
+    Serial.println("    Format is '/home/clock/<persons_name>/<command>'");
     return;
   }
 
@@ -186,11 +202,27 @@ void msgReceived(char* topic, byte* payload, unsigned int length) {
     message[i] = payload[i];
   }
   message[length] = '\0';
-  Serial.print(" to ");
+  Serial.print(" Message is: ");
   Serial.println(message);
 
-  int pos = parseLocation(message);
-  Serial.print("  position index: ");
-  Serial.println(pos);
-  active->setNewPosition(pos);
+  std::size_t topic_len = strlen(topic);
+  if (std::strncmp(topic + topic_len - sizeof(location_cmd), location_cmd, sizeof(location_cmd))) {
+    int pos = parseLocation(message);
+    Serial.println("  Move to position");
+    Serial.print("  position index: ");
+    Serial.println(pos);
+    active->setNewPosition(pos);
+  } else if (std::strncmp(topic + topic_len - sizeof(step_cmd), step_cmd, sizeof(step_cmd))) {
+    long steps = parseStepCount(message);
+    Serial.println("  Step offset");
+    Serial.print("  step count: ");
+    Serial.println(steps);
+    active->move(steps);
+  } else {
+    Serial.println("  Invalid command - the following are accepted commands:");
+    Serial.print("    ");
+    Serial.println(location_cmd);
+    Serial.print("    ");
+    Serial.println(step_cmd);
+  }
 }
