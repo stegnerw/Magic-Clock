@@ -206,13 +206,19 @@ void msgReceived(char* topic, uint8_t* payload, unsigned int length) {
   Serial.println(message);
 
   std::size_t topic_len = strlen(topic);
-  if (std::strncmp(topic + topic_len - sizeof(location_cmd), location_cmd, sizeof(location_cmd)) == 0) {
+  std::size_t location_cmd_len = strlen(location_cmd);
+  std::size_t step_cmd_len = strlen(step_cmd);
+
+  // Correctly compare the end of the topic with the commands
+  if (topic_len >= location_cmd_len && 
+      std::strncmp(topic + topic_len - location_cmd_len, location_cmd, location_cmd_len) == 0) {
     int pos = parseLocation(message);
     Serial.println("  Move to position");
     Serial.print("  position index: ");
     Serial.println(pos);
     active->setNewPosition(pos);
-  } else if (std::strncmp(topic + topic_len - sizeof(step_cmd), step_cmd, sizeof(step_cmd)) == 0) {
+  } else if (topic_len >= step_cmd_len && 
+              std::strncmp(topic + topic_len - step_cmd_len, step_cmd, step_cmd_len) == 0) {
     long steps = parseStepCount(message);
     Serial.println("  Step offset");
     Serial.print("  step count: ");
