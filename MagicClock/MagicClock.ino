@@ -26,8 +26,8 @@ const char step_cmd[] = "/step";
 ClockHand personA = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 2, 3, 4, 5);
 ClockHand personB = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 6, 7, 8, 9);
 ClockHand personC = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 10, 11, 12, 13);
-ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 14, 15, 16, 17);
-ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 18, 19, 20, 21);
+ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 17, 18, 19, 20);
+ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 21, 22, 23, 24);
 ClockHand *active;
 
 void setup() {
@@ -206,13 +206,19 @@ void msgReceived(char* topic, uint8_t* payload, unsigned int length) {
   Serial.println(message);
 
   std::size_t topic_len = strlen(topic);
-  if (std::strncmp(topic + topic_len - sizeof(location_cmd), location_cmd, sizeof(location_cmd)) == 0) {
+  std::size_t location_cmd_len = strlen(location_cmd);
+  std::size_t step_cmd_len = strlen(step_cmd);
+
+  // Correctly compare the end of the topic with the commands
+  if (topic_len >= location_cmd_len && 
+      std::strncmp(topic + topic_len - location_cmd_len, location_cmd, location_cmd_len) == 0) {
     int pos = parseLocation(message);
     Serial.println("  Move to position");
     Serial.print("  position index: ");
     Serial.println(pos);
     active->setNewPosition(pos);
-  } else if (std::strncmp(topic + topic_len - sizeof(step_cmd), step_cmd, sizeof(step_cmd)) == 0) {
+  } else if (topic_len >= step_cmd_len && 
+              std::strncmp(topic + topic_len - step_cmd_len, step_cmd, step_cmd_len) == 0) {
     long steps = parseStepCount(message);
     Serial.println("  Step offset");
     Serial.print("  step count: ");
