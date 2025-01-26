@@ -26,8 +26,8 @@ const char step_cmd[] = "/step";
 ClockHand personA = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 2, 3, 4, 5);
 ClockHand personB = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 6, 7, 8, 9);
 ClockHand personC = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 10, 11, 12, 13);
-ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 14, 15, 16, 17);
-ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 18, 19, 20, 21);
+ClockHand personD = ClockHand(false, POSITIONS, SPEED, STEPS, MODE, 17, 18, 19, 20);
+ClockHand personE = ClockHand(true, POSITIONS, SPEED, STEPS, MODE, 21, 22, 23, 24);
 ClockHand *active;
 
 void setup() {
